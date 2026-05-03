@@ -150,8 +150,8 @@ public sealed partial class PlayerController : Component
 
 		var body = tr.Body;
 
-		GroundObject = body?.GetGameObject();
-		GroundComponent = body?.GetComponent();
+		GroundObject = body?.GameObject;
+		GroundComponent = body?.Component;
 
 		if ( GroundObject is not null )
 		{

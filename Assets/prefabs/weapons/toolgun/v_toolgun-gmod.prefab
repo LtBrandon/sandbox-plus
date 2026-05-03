@@ -1,13 +1,25 @@
 {
   "RootObject": {
     "__guid": "1e61746f-defb-497c-bbaa-e1cba63b7c69",
+    "__version": 2,
     "Flags": 0,
     "Name": "v_toolgun-gmod",
+    "Position": "0,0,0",
+    "Rotation": "0,0,0,1",
+    "Scale": "1,1,1",
+    "Tags": "",
     "Enabled": true,
+    "NetworkMode": 2,
+    "NetworkFlags": 0,
+    "NetworkOrphaned": 0,
+    "NetworkTransmit": true,
+    "OwnerTransfer": 1,
     "Components": [
       {
         "__type": "ViewModel",
         "__guid": "6e677851-ec97-4296-9cdb-a53eb1f0f39a",
+        "__enabled": true,
+        "Flags": 0,
         "BobCycleTime": 7,
         "BobDirection": "0,1,0.5",
         "EnableSwingAndBob": true,
@@ -32,20 +44,34 @@
     "Children": [
       {
         "__guid": "16a1d1a2-3b62-49b0-992a-2bef70592f34",
+        "__version": 2,
         "Flags": 0,
         "Name": "vm",
+        "Position": "0,0,0",
+        "Rotation": "0,0,0,1",
+        "Scale": "1,1,1",
+        "Tags": "",
         "Enabled": true,
+        "NetworkMode": 2,
+        "NetworkFlags": 0,
+        "NetworkOrphaned": 0,
+        "NetworkTransmit": true,
+        "OwnerTransfer": 1,
         "Components": [
           {
             "__type": "Sandbox.SkinnedModelRenderer",
             "__guid": "9a86bb8a-43b8-4107-8441-a50941f9eff6",
+            "__enabled": true,
+            "Flags": 0,
             "AnimationGraph": null,
             "BodyGroups": 18446744073709551615,
             "BoneMergeTarget": null,
             "CreateAttachments": false,
             "CreateBoneObjects": false,
+            "LodOverride": null,
             "MaterialGroup": null,
             "MaterialOverride": null,
+            "Materials": null,
             "Model": "models/weapons/toolgun/v_toolgun.vmdl",
             "Morphs": {},
             "OnComponentDestroy": null,
@@ -63,6 +89,7 @@
               "vectors": {},
               "rotations": {}
             },
+            "PlaybackRate": 1,
             "RenderOptions": {
               "GameLayer": true,
               "OverlayLayer": false,
@@ -71,7 +98,9 @@
             },
             "RenderType": "Off",
             "Sequence": {
-              "Name": null
+              "Name": null,
+              "Looping": true,
+              "Blending": false
             },
             "Tint": "1,1,1,1",
             "UseAnimGraph": true
@@ -80,14 +109,25 @@
         "Children": [
           {
             "__guid": "ce33d55a-e403-46ab-aaa8-cff2805f12b6",
+            "__version": 2,
             "Flags": 0,
             "Name": "arms_adapter",
             "Position": "0,0,1",
+            "Rotation": "0,0,0,1",
+            "Scale": "1,1,1",
+            "Tags": "",
             "Enabled": true,
+            "NetworkMode": 2,
+            "NetworkFlags": 0,
+            "NetworkOrphaned": 0,
+            "NetworkTransmit": true,
+            "OwnerTransfer": 1,
             "Components": [
               {
                 "__type": "Sandbox.SkinnedModelRenderer",
                 "__guid": "16bb783a-9ae8-477b-8d13-72fd968d8491",
+                "__enabled": true,
+                "Flags": 0,
                 "AnimationGraph": null,
                 "BodyGroups": 18446744073709551615,
                 "BoneMergeTarget": {
@@ -98,8 +138,10 @@
                 },
                 "CreateAttachments": false,
                 "CreateBoneObjects": false,
+                "LodOverride": null,
                 "MaterialGroup": null,
                 "MaterialOverride": null,
+                "Materials": null,
                 "Model": "models/hand_adapter_valvebiped_to_sbox/hand_adapter_valvebiped_to_sbox.vmdl",
                 "Morphs": {},
                 "OnComponentDestroy": null,
@@ -115,6 +157,7 @@
                   "vectors": {},
                   "rotations": {}
                 },
+                "PlaybackRate": 1,
                 "RenderOptions": {
                   "GameLayer": false,
                   "OverlayLayer": false,
@@ -123,101 +166,48 @@
                 },
                 "RenderType": "On",
                 "Sequence": {
-                  "Name": null
+                  "Name": null,
+                  "Looping": true,
+                  "Blending": false
                 },
                 "Tint": "1,1,1,1",
                 "UseAnimGraph": false
               }
             ],
-            "Children": [
-              {
-                "__guid": "fe1a4581-512e-4f9f-87fc-485620e57507",
-                "Flags": 0,
-                "Name": "arms",
-                "Enabled": true,
-                "Components": [
-                  {
-                    "__type": "Sandbox.SkinnedModelRenderer",
-                    "__guid": "e9587407-4d64-4040-bb6e-abdec9904bb7",
-                    "AnimationGraph": null,
-                    "BodyGroups": 21,
-                    "BoneMergeTarget": {
-                      "_type": "component",
-                      "component_id": "16bb783a-9ae8-477b-8d13-72fd968d8491",
-                      "go": "ce33d55a-e403-46ab-aaa8-cff2805f12b6",
-                      "component_type": "SkinnedModelRenderer"
-                    },
-                    "CreateAttachments": false,
-                    "CreateBoneObjects": false,
-                    "MaterialGroup": null,
-                    "MaterialOverride": null,
-                    "Model": "models/first_person/first_person_arms.vmdl",
-                    "Morphs": {},
-                    "OnComponentDestroy": null,
-                    "OnComponentDisabled": null,
-                    "OnComponentEnabled": null,
-                    "OnComponentFixedUpdate": null,
-                    "OnComponentStart": null,
-                    "OnComponentUpdate": null,
-                    "Parameters": {
-                      "bools": {},
-                      "ints": {},
-                      "floats": {},
-                      "vectors": {},
-                      "rotations": {}
-                    },
-                    "RenderOptions": {
-                      "GameLayer": true,
-                      "OverlayLayer": false,
-                      "BloomLayer": false,
-                      "AfterUILayer": false
-                    },
-                    "RenderType": "Off",
-                    "Sequence": {
-                      "Name": null
-                    },
-                    "Tint": "1,1,1,1",
-                    "UseAnimGraph": false
-                  }
-                ]
-              }
-            ]
+            "Children": []
           }
         ]
       }
     ],
-    "__variables": [],
     "__properties": {
-      "FixedUpdateFrequency": 50,
-      "MaxFixedUpdates": 5,
-      "NetworkFrequency": 30,
       "NetworkInterpolation": true,
-      "PhysicsSubSteps": 1,
-      "ThreadedAnimation": true,
       "TimeScale": 1,
-      "UseFixedUpdate": true,
+      "WantsSystemScene": true,
       "Metadata": {},
       "NavMesh": {
         "Enabled": false,
         "IncludeStaticBodies": true,
         "IncludeKeyframedBodies": true,
-        "EditorAutoUpdate": true,
+        "EditorAutoUpdate": false,
         "AgentHeight": 64,
         "AgentRadius": 16,
         "AgentStepSize": 18,
         "AgentMaxSlope": 40,
         "ExcludedBodies": "",
-        "IncludedBodies": ""
+        "IncludedBodies": "",
+        "DeferGeneration": false,
+        "CustomBounds": false
       }
-    }
+    },
+    "__variables": []
   },
+  "ResourceVersion": 2,
   "ShowInMenu": false,
   "MenuPath": null,
   "MenuIcon": null,
   "DontBreakAsTemplate": false,
-  "ResourceVersion": 1,
   "__references": [
     "katka.hand_adapter_valvebiped_to_sbox#36579"
   ],
-  "__version": 1
+  "__version": 2
 }

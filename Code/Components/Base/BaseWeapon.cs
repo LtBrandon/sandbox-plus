@@ -178,7 +178,8 @@ public partial class BaseWeapon : Component, SandboxPlus.PlayerController.IEvent
 
 	protected virtual void ShootEffects()
 	{
-		AttachParticleSystem( "particles/pistol_muzzleflash.vpcf", "muzzle" );
+		// LegacyParticleSystem is fully broken now, todo replace
+		// AttachParticleSystem( "particles/pistol_muzzleflash.vpcf", "muzzle" );
 		ViewModel?.Renderer?.Set( "fire", true );
 	}
 

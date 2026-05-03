@@ -37,7 +37,8 @@ public partial class ThrusterComponent : BaseWireInputComponent, Component.IPres
 		if ( effects != null )
 			return;
 
-		effects = Particles.MakeParticleSystem( "particles/physgun_end_nohit.vpcf", Transform.World, 0, GameObject );
+		// LegacyParticleSystem is fully broken now, todo replace
+		// effects = Particles.MakeParticleSystem( "particles/physgun_end_nohit.vpcf", Transform.World, 0, GameObject );
 	}
 
 	protected void OnThrusterDisabled()

@@ -1,5 +1,4 @@
 @using Sandbox.UI
-@using Sandbox.UI.Tests
 
 @inherits Panel
 
@@ -7,15 +6,13 @@
 
 @code
 {
-    private VirtualScrollPanel canvas;
+    private VirtualGrid canvas;
 
     public SpawnList()
     {
         AddChild(out canvas, "canvas");
 
-        canvas.Layout.AutoColumns = true;
-        canvas.Layout.ItemWidth = 100;
-        canvas.Layout.ItemHeight = 100;
+        canvas.ItemSize = new Vector2( 100, 100 );
 
         canvas.OnCreateCell = (cell, data) =>
         {

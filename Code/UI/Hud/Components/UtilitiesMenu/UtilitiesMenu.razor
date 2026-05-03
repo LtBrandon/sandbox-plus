@@ -64,7 +64,7 @@
 			{
 				var page = x.Item2;
 				return page.Title.Contains(SearchEntry.Text, StringComparison.OrdinalIgnoreCase) || page.Group.Contains(SearchEntry.Text, StringComparison.OrdinalIgnoreCase);
-			});
+			}).ToList();
 		}
 		var list = new List<TypeDescription>();
 		foreach (var utility in utilities)

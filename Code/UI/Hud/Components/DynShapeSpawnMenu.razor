@@ -5,12 +5,12 @@
 @using Sandbox
 @using Sandbox.UI
 @using Sandbox.UI.Construct
-@using Sandbox.UI.Tests
+@namespace Sandbox.UI
 @inherits Panel
 @attribute [StyleSheet]
 
 <root class="DynSpawnShapeMenu">
-	<VirtualScrollPanel @ref="Canvas" class="dynshapecanvas"/>
+	<VirtualGrid @ref="Canvas" class="dynshapecanvas"/>
 	<DynShapeMaker OnCreateClicked=@SpawnShape OnUpdatePreview=@UpdatePreview TextureSize:bind=@TextureSize/>
 	<ScenePanel @ref="previewScenePanel" class="spawnicon"/>
 </root>
@@ -26,7 +26,7 @@
 		}
 	}
 
-	private VirtualScrollPanel Canvas;
+	private VirtualGrid Canvas;
 	private HashSet<DynShapeDimensions> shapes = new();
 
 	// todo: this doesn't work anymore
@@ -36,7 +36,7 @@
 		Log.Info( "DynShapeSpawnMenu created" );
 		var plateList = SpawnMenu.Instance.SpawnMenuLeftBody.AddChild<DynShapeSpawnMenu>();
 		plateList.AddClass("hidden");
-		var button = SpawnMenu.Instance.SpawnMenuLeftTabs.Add.Button( "DynShapes", () => SpawnMenu.Instance.SetActiveLeft(plateList) );
+		var button = SpawnMenu.Instance.SpawnMenuLeftTabs.AddChild( new Button( "DynShapes", () => SpawnMenu.Instance.SetActiveLeft(plateList) ));
 		button.AddClass("btn");
 	}
 
@@ -54,9 +54,7 @@
 	
 	private void SetupCanvas()
 	{
-		Canvas.Layout.AutoColumns = true;
-		Canvas.Layout.ItemWidth = 64;
-		Canvas.Layout.ItemHeight = 64;
+		Canvas.ItemSize = new Vector2( 64, 64 );
 		Canvas.OnCreateCell = ( cell, data ) =>
 		{
 			AddShapeButton( cell, (DynShapeDimensions)data );
@@ -83,11 +81,8 @@
 
 	private Button AddShapeButton(Panel cell, DynShapeDimensions shape)
 	{
-		var btn = cell.Add.Button( GetShapeButtonLabel(shape) );
+		var btn = cell.AddChild( new Button( GetShapeButtonLabel(shape), () => SpawnShape( shape ) ) );
 		btn.AddClass( "icon" );
-		btn.AddEventListener( "onclick", () =>
-			SpawnShape( shape )
-		);
 		return btn;
 	}
 	private string GetShapeButtonLabel( DynShapeDimensions shape )

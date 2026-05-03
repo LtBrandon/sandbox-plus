@@ -1,5 +1,4 @@
 using Sandbox;
-using Sandbox.Diagnostics;
 
 public sealed class UndoSystem : GameObjectSystem<UndoSystem>
 {
@@ -88,7 +87,8 @@ public sealed class UndoSystem : GameObjectSystem<UndoSystem>
 	{
 		if ( pos != Vector3.Zero )
 		{
-			Particles.MakeParticleSystem( "particles/physgun_freeze.vpcf", new Transform( pos ), 4 );
+			// LegacyParticleSystem is fully broken now, todo replace
+			// Particles.MakeParticleSystem( "particles/physgun_freeze.vpcf", new Transform( pos ), 4 );
 		}
 	}
 }

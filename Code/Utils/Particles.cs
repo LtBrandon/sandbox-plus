@@ -7,7 +7,7 @@
 		return MakeParticleSystem( path, transform, time, parent );
 	}
 
-	[Rpc.Broadcast(NetFlags.Unreliable)]
+	[Rpc.Broadcast( NetFlags.Unreliable )]
 	public static void SpawnParticleSystem( Guid connection, string path, Vector3 position, Rotation rotation, float time = 1, GameObject parent = null )
 	{
 		if ( Connection.Local.Id == connection )
@@ -19,6 +19,8 @@
 	public static LegacyParticleSystem MakeParticleSystem( string path, Transform transform, float time = 1, GameObject parent = null )
 	{
 		var particleSystem = ParticleSystem.Load( path );
+		// if ( !particleSystem.IsValid() )
+		// 	Log.Warning( $"Failed to load particle system at path {path}" );
 
 		if ( !particleSystem.IsValid() )
 			return null;

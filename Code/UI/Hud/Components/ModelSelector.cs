@@ -1,4 +1,3 @@
-using Sandbox.UI.Tests;
 using System.Text.RegularExpressions;
 using Sandbox.UI.Construct;
 
@@ -9,7 +8,7 @@ namespace Sandbox.UI
 	{
 		private static Dictionary<string, HashSet<string>> SpawnLists = new();
 		private static bool spawnListsLoaded = false;
-		VirtualScrollPanel Canvas;
+		VirtualGrid Canvas;
 
 		private static readonly Regex reModelMatGroup = new( @"^(.*?)(?:--(\d+))?(\.vmdl)?$" );
 		private static readonly Regex reSpawnlistFile = new( @"([^\.]+)\.spawnlist$" );
@@ -47,9 +46,7 @@ namespace Sandbox.UI
 			AddClass( "modelselector" );
 			AddChild( out Canvas, "canvas" );
 
-			Canvas.Layout.AutoColumns = true;
-			Canvas.Layout.ItemWidth = 64;
-			Canvas.Layout.ItemHeight = 64;
+			Canvas.ItemSize = new Vector2( 64, 64 );
 			Canvas.OnCreateCell = async ( cell, data ) =>
 			{
 				var file = (string)data;

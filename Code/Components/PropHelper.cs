@@ -85,7 +85,7 @@ public partial class PropHelper : Component, Component.ICollisionListener
 
 		Health -= amount;
 
-		if ( Health <= 0f && !Invincible )
+		if ( Health <= 0f && !Invincible && Prop.IsValid() )
 			Prop.Kill();
 	}
 
@@ -111,10 +111,11 @@ public partial class PropHelper : Component, Component.ICollisionListener
 			}
 		}
 
-		if ( Prop.Model.TryGetData<ModelExplosionBehavior>( out var data ) )
-		{
-			Explosion( data.Effect, data.Sound, WorldPosition, data.Radius, data.Damage, data.Force );
-		}
+		// if ( Prop.Model.TryGetData<ModelExplosionBehavior>( out var data ) )
+		// {
+		// todo: garry broke this in May 2025
+		// Explosion( data.Effect, data.Sound, WorldPosition, data.Radius, data.Damage, data.Force );
+		// }
 
 		Prop.Model = null; // Prevents prop from spawning more gibs.
 	}
@@ -202,7 +203,7 @@ public partial class PropHelper : Component, Component.ICollisionListener
 				group.BodyType = info.Type;
 			}
 
-			if ( rootBody.IsValid() )
+			if ( rootBody.IsValid() && ModelPhysics.Renderer.IsValid() )
 				rootBody.Transform = ModelPhysics.Renderer.GameObject.WorldTransform;
 
 			return;

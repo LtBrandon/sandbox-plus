@@ -1,4 +1,3 @@
-using Sandbox.UI.Tests;
 using Sandbox.UI.Construct;
 
 namespace Sandbox.UI
@@ -6,7 +5,7 @@ namespace Sandbox.UI
 	[Library]
 	public partial class MaterialSelector : Panel
 	{
-		VirtualScrollPanel Canvas;
+		VirtualGrid Canvas;
 
 		public Action<string> OnValueChanged { get; set; }
 		protected string Value { get; set; }
@@ -28,9 +27,7 @@ namespace Sandbox.UI
 			AddClass( "modelselector" );
 			AddChild( out Canvas, "canvas" );
 
-			Canvas.Layout.AutoColumns = true;
-			Canvas.Layout.ItemWidth = 64;
-			Canvas.Layout.ItemHeight = 64;
+			Canvas.ItemSize = new Vector2( 64, 64 );
 			Canvas.OnCreateCell = async ( cell, data ) =>
 			{
 				var file = (string)data;

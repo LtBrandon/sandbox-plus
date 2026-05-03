@@ -8,7 +8,6 @@ Its built on top of [Sandbox Classic](https://github.com/Softsplit/sandbox) (whi
 
 ### Gameplay
 
-- It exists (since Facepunch deleted theirs)
 - Variety of Tools:
 - - Constraint tool: an omni-tool (like Precision Tool) with all your classic Gmod constraints (weld/axis/rope/elastic/slider/ballsocket) and nudge/rotate/move
 - - Duplicator

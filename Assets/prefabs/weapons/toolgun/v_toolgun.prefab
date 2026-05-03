@@ -830,7 +830,7 @@
   "ResourceVersion": 1,
   "__references": [
     "facepunch.v_toolgun#49561",
-    "facepunch.v_usp#74471"
+    "facepunch.v_usp#103129"
   ],
   "__version": 1
 }

@@ -192,6 +192,7 @@ public partial class PropHelper
 	[Rpc.Broadcast]
 	private static void MakeVisualRope( GameObject go1, Vector3 position1, GameObject go2, Vector3 position2 )
 	{
+		return; // LegacyParticleSystem is fully broken now, todo replace
 		var rope = Particles.MakeParticleSystem( "particles/entity/rope.vpcf", go1.WorldTransform, 0, go1 );
 		rope.GameObject.SetParent( go1 );
 		var RopePoints = new List<ParticleControlPoint>();

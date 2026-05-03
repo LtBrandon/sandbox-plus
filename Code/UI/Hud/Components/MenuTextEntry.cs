@@ -1,7 +1,7 @@
+using Sandbox;
 
 namespace Sandbox.UI
 {
-	[StyleSheet]
 	[Library( "MenuTextEntry" )]
 	public partial class MenuTextEntry : TextEntry
 	{

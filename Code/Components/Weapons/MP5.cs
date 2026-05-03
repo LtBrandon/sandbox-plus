@@ -53,6 +53,7 @@ partial class MP5 : BaseWeapon
 	{
 		base.ShootEffects();
 
-		AttachParticleSystem( EjectBrass.Name, "eject" );
+		// LegacyParticleSystem is fully broken now, todo replace
+		// AttachParticleSystem( EjectBrass.Name, "eject" );
 	}
 }

@@ -71,7 +71,8 @@
 			.WithoutTags( "player" )
 			.Run();
 
-		beam ??= CreateBeam( tr.EndPosition );
+		// LegacyParticleSystem is fully broken now, todo replace
+		// beam ??= CreateBeam( tr.EndPosition );
 
 		if ( beam.IsValid() )
 		{
@@ -132,17 +133,21 @@
 			if ( beam?.IsValid() == true )
 				beam?.SceneObject.SetControlPoint( 1, lastBeamPos );
 
-			endNoHit ??= Particles.MakeParticleSystem( "particles/physgun_end_nohit.vpcf", new Transform( lastBeamPos ), 0 );
-			endNoHit.SceneObject.SetControlPoint( 0, lastBeamPos );
-			endNoHit.WorldPosition = lastBeamPos;
+			// LegacyParticleSystem is fully broken now, todo replace
+			// endNoHit ??= Particles.MakeParticleSystem( "particles/physgun_end_nohit.vpcf", new Transform( lastBeamPos ), 0 );
+			// endNoHit.SceneObject.SetControlPoint( 0, lastBeamPos );
+			// endNoHit.WorldPosition = lastBeamPos;
 		}
 	}
 
 	private LegacyParticleSystem CreateBeam( Vector3 endPos ) =>
 		Particles.MakeParticleSystem( "particles/physgun_beam.vpcf", new Transform( endPos ), 0 );
 
-	private void FreezeEffects() =>
-		Particles.MakeParticleSystem( "particles/physgun_freeze.vpcf", new Transform( lastBeamPos ), 4 );
+	private void FreezeEffects()
+	{
+		// LegacyParticleSystem is fully broken now, todo replace
+		// return Particles.MakeParticleSystem( "particles/physgun_freeze.vpcf", new Transform( lastBeamPos ), 4 );
+	}
 
 	protected override void OnDestroy()
 	{

@@ -1,3 +1,5 @@
+using Sandbox.UI;
+
 partial class ToolGun
 {
 	private Texture screenTexture;

@@ -11,7 +11,7 @@ public static partial class SandboxBaseExtensions
 		SceneTraceResult tr,
 		Func<Surface.ImpactEffectData, List<string>> getDecals,
 		Func<Surface.ImpactEffectData, List<string>> getEffects,
-		Func<Surface.SoundData, string> getSound
+		Func<Surface.OldSoundData, string> getSound
 		)
 	{
 		var surf = self.GetBaseSurface();
@@ -139,7 +139,7 @@ public static partial class SandboxBaseExtensions
 			tr,
 			( Surface.ImpactEffectData data ) => data.BulletDecal,
 			( Surface.ImpactEffectData data ) => data.Bullet,
-			( Surface.SoundData data ) => data.Bullet
+			( Surface.OldSoundData data ) => data.Bullet
 		);
 	}
 
@@ -153,7 +153,7 @@ public static partial class SandboxBaseExtensions
 			tr,
 			( Surface.ImpactEffectData data ) => data.HardDecal,
 			( Surface.ImpactEffectData data ) => data.HardParticles,
-			( Surface.SoundData data ) => data.ImpactHard
+			( Surface.OldSoundData data ) => data.ImpactHard
 		);
 	}
 

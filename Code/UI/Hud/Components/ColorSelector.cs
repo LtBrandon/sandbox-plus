@@ -1,5 +1,4 @@
 using Sandbox.UI.Construct;
-using Sandbox.UI.Tests;
 
 namespace Sandbox.UI
 {
@@ -19,7 +18,7 @@ namespace Sandbox.UI
 			}
 		}
 		SerializedProperty _property;
-		VirtualScrollPanel Canvas;
+		VirtualGrid Canvas;
 
 		private bool initialized;
 		protected override void OnParametersSet()
@@ -31,9 +30,7 @@ namespace Sandbox.UI
 			AddClass( "flex-column" );
 			AddChild( out Canvas, "canvas" );
 
-			Canvas.Layout.AutoColumns = true;
-			Canvas.Layout.ItemWidth = 64;
-			Canvas.Layout.ItemHeight = 64;
+			Canvas.ItemSize = new Vector2( 64, 64 );
 
 			var colors = new Color[] { Color.White, Color.Black, Color.Red, Color.Cyan, Color.Green, Color.Magenta, Color.Yellow, Color.Blue, Color.Gray, Color.Orange };
 			
