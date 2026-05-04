@@ -62,7 +62,7 @@ public class BoxShooter : BaseTool
 		}
 		else if ( prop.Components.TryGet<ModelPhysics>( out var modelPhysics ) )
 		{
-			modelPhysics.PhysicsGroup.Velocity = Owner.EyeTransform.Forward * 1000;
+			modelPhysics.Bodies[0].Component.Velocity = Owner.EyeTransform.Forward * 1000;
 		}
 
 		go.NetworkSpawn();

@@ -44,7 +44,7 @@ public partial class PhysGun : BaseWeapon, Component.INetworkListener
 		if ( bone > -1 )
 		{
 			ModelPhysics modelPhysics = gameObject.Components.Get<ModelPhysics>();
-			return modelPhysics.IsValid() ? modelPhysics.PhysicsGroup.GetBody( bone ) : null;
+			return modelPhysics.IsValid() ? modelPhysics.Bodies[bone].Component.PhysicsBody : null;
 		}
 		else
 		{
@@ -217,7 +217,7 @@ public partial class PhysGun : BaseWeapon, Component.INetworkListener
 			ModelPhysics modelPhysics = attachedEnt.GetComponent<ModelPhysics>();
 			Rigidbody rigidbody = attachedEnt.GetComponent<Rigidbody>();
 
-			var body = modelPhysics.IsValid() ? modelPhysics?.PhysicsGroup?.GetBody( 0 ) : rigidbody?.PhysicsBody;
+			var body = modelPhysics.IsValid() ? modelPhysics?.Bodies[0].Component.PhysicsBody : rigidbody?.PhysicsBody;
 
 			if ( !body.IsValid() ) continue;
 

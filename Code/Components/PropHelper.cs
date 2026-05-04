@@ -36,7 +36,6 @@ public partial class PropHelper : Component, Component.ICollisionListener
 		}
 		set => _renderer = value;
 	}
-	[Sync] public NetDictionary<int, BodyInfo> NetworkedBodies { get; set; } = new();
 
 	private Vector3 lastPosition = Vector3.Zero;
 
@@ -124,10 +123,10 @@ public partial class PropHelper : Component, Component.ICollisionListener
 	{
 		if ( IsProxy ) return;
 
-		var body = ModelPhysics?.PhysicsGroup?.GetBody( bodyIndex );
-		if ( body.IsValid() )
+		var body = ModelPhysics?.Bodies[bodyIndex];
+		if ( body.HasValue && body.Value.Component.IsValid() )
 		{
-			body.ApplyForce( force );
+			body.Value.Component.ApplyForce( force );
 		}
 		else if ( bodyIndex == 0 && Rigidbody.IsValid() )
 		{
@@ -141,9 +140,9 @@ public partial class PropHelper : Component, Component.ICollisionListener
 
 		if ( ModelPhysics.IsValid() )
 		{
-			foreach ( var body in ModelPhysics.PhysicsGroup.Bodies )
+			for ( int i = 0; i < ModelPhysics.Bodies.Count; i++ )
 			{
-				AddForce( body.GroupIndex, force );
+				AddForce( i, force );
 			}
 		}
 		else
@@ -176,63 +175,6 @@ public partial class PropHelper : Component, Component.ICollisionListener
 
 			lastPosition = Prop.WorldPosition;
 		}
-
-		UpdateNetworkedBodies();
-	}
-
-	private void UpdateNetworkedBodies()
-	{
-		if ( !ModelPhysics.IsValid() )
-		{
-			ModelPhysics = GetComponent<ModelPhysics>();
-			Rigidbody = GetComponent<Rigidbody>();
-
-			return;
-		}
-
-		if ( !Network.IsOwner )
-		{
-			var rootBody = FindRootBody();
-
-			foreach ( var (groupId, info) in NetworkedBodies )
-			{
-				var group = ModelPhysics.PhysicsGroup.GetBody( groupId );
-				if ( !group.IsValid() ) continue;
-
-				group.Transform = info.Transform;
-				group.BodyType = info.Type;
-			}
-
-			if ( rootBody.IsValid() && ModelPhysics.Renderer.IsValid() )
-				rootBody.Transform = ModelPhysics.Renderer.GameObject.WorldTransform;
-
-			return;
-		}
-
-		foreach ( var body in ModelPhysics.PhysicsGroup.Bodies )
-		{
-			if ( body.GroupIndex == 0 )
-				continue;
-
-			var tx = body.GetLerpedTransform( Time.Now );
-			NetworkedBodies[body.GroupIndex] = new BodyInfo
-			{
-				Type = body.BodyType,
-				Transform = tx
-			};
-		}
-	}
-
-	private PhysicsBody FindRootBody()
-	{
-		var body = ModelPhysics.PhysicsGroup.Bodies.FirstOrDefault();
-		if ( body == null )
-			return null;
-
-		while ( body.Parent.IsValid() )
-			body = body.Parent;
-
-		return body;
 	}
 
 	private ModelPropData GetModelPropData()
@@ -261,7 +203,7 @@ public partial class PropHelper : Component, Component.ICollisionListener
 		var minImpactSpeed = 500;
 		if ( minImpactSpeed <= 0.0f ) minImpactSpeed = 500;
 
-		float impactDmg = Rigidbody.IsValid() ? Rigidbody.Mass / 10 : ModelPhysics.IsValid() ? ModelPhysics.PhysicsGroup.Mass / 10 : 10;
+		float impactDmg = Rigidbody.IsValid() ? Rigidbody.Mass / 10 : ModelPhysics.IsValid() ? ModelPhysics.Mass / 10 : 10;
 		if ( impactDmg <= 0.0f ) impactDmg = 10;
 
 		float speed = collision.Contact.Speed.Length;
