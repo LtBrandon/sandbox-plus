@@ -68,7 +68,16 @@ public partial class ResizerTool : BaseTool
 	[Rpc.Broadcast]
 	void SetPropSize( GameObject gameObject, Vector3 size )
 	{
+		// retain prop's frozen-ness. Not needed for ragdolls, which don't auto-unfreeze whens caled
+		Rigidbody rigidbody = gameObject.Components.Get<Rigidbody>();
+		var oldBodyType = rigidbody.IsValid() ? rigidbody.PhysicsBody.BodyType : PhysicsBodyType.Static;
+
 		gameObject.WorldScale = size;
+
+		if ( rigidbody.IsValid() )
+		{
+			rigidbody.PhysicsBody.BodyType = oldBodyType;
+		}
 	}
 
 	[Rpc.Broadcast]
