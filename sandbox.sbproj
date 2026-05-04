@@ -15,12 +15,13 @@
     "MinPlayers": 1,
     "CsProjName": "",
     "ControlModes": {},
-    "LaunchMode": "Normal",
-    "StartupScene": "scenes/menu.scene",
+    "LaunchMode": "Launcher",
+    "StartupScene": "scenes/game.scene",
     "MapStartupScene": "scenes/game.scene",
     "ParentPackage": "",
     "Summary": "Create and play in your own sandbox mode.",
     "Description": "This game lets you spawn props, and constrain them into cars and forts. It's like Garry's Mod.",
-    "DedicatedServerStartupScene": "scenes/game.scene"
+    "DedicatedServerStartupScene": "scenes/game.scene",
+    "SystemScene": "scenes/engine.scene"
   }
 }

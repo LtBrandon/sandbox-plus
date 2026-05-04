@@ -10,39 +10,41 @@ public partial class SandboxGameManager : GameObjectSystem<SandboxGameManager>, 
 
 	void ISceneStartup.OnHostPreInitialize( SceneFile scene )
 	{
-		Log.Info( $"{Package.GetCachedTitle(Game.Ident)}: Loading scene {scene.ResourceName}" );
+		Log.Info( $"{Package.GetCachedTitle( Game.Ident )}: Loading scene {scene.ResourceName} {scene.GetMetadata( "Title" )}" );
 	}
 
 	async void ISceneStartup.OnHostInitialize()
 	{
 		// NOTE: See CreateGameModal.razor, line 73 for a related issue
 
-		var currentScene = Scene.Source as SceneFile;
-		if ( currentScene.GetMetadata( "Title" ) == "game" )
+		if ( Scene.Source is SceneFile currentScene2 )
 		{
-			// If the map is a scene, load it
-			var mapPackage = await Package.FetchAsync( CustomMapInstance.Current.MapName, false );
-			if ( mapPackage == null ) return;
+			Log.Info( $"SandboxGameManager: Loading map scene {currentScene2.ResourceName} {currentScene2.GetMetadata( "Title" )}" );
+		}
 
-			var primaryAsset = mapPackage.GetMeta<string>( "PrimaryAsset" );
-			if ( string.IsNullOrEmpty( primaryAsset ) ) return;
+		// If the map is a scene, load it
+		var mapPackage = await Package.FetchAsync( CustomMapInstance.Current.MapName, false );
+		if ( mapPackage == null ) return;
 
-			var sceneLoadOptions = new SceneLoadOptions { IsAdditive = true };
+		var primaryAsset = mapPackage.GetMeta<string>( "PrimaryAsset" );
+		if ( string.IsNullOrEmpty( primaryAsset ) ) return;
 
-			if ( primaryAsset.EndsWith( ".scene" ) )
-			{
-				var sceneFile = mapPackage.GetMeta<SceneFile>( "PrimaryAsset" );
-				sceneLoadOptions.SetScene( sceneFile );
-				Scene.Load( sceneLoadOptions );
-			}
+		var sceneLoadOptions = new SceneLoadOptions { IsAdditive = true };
 
+		if ( primaryAsset.EndsWith( ".scene" ) )
+		{
+			Log.Info( $"SandboxGameManager: Loading map scene {primaryAsset} from package {mapPackage.Title}" );
+			var sceneFile = mapPackage.GetMeta<SceneFile>( "PrimaryAsset" );
+			sceneLoadOptions.SetScene( sceneFile );
+			Scene.Load( sceneLoadOptions );
+			Log.Info( $"SandboxGameManager: loading engine scene" );
 			sceneLoadOptions.SetScene( "scenes/engine.scene" );
 			Scene.Load( sceneLoadOptions );
+		}
 
-			if ( !Networking.IsActive )
-			{
-				Networking.CreateLobby( new LobbyConfig { Name = $"{Package.GetCachedTitle( Game.Ident )} Server" } );
-			}
+		if ( !Networking.IsActive )
+		{
+			Networking.CreateLobby( new LobbyConfig { Name = $"{Package.GetCachedTitle( Game.Ident )} Server" } );
 		}
 		InitAddons( true );
 	}
