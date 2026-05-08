@@ -25,8 +25,6 @@
 
 	protected Texture GetTexture(Model Model)
 	{
-		return Texture.Load(FileSystem.Mounted, $"/{Model.ResourcePath}_c.png", false)
-			@* ?? Texture.Load(FileSystem.OrganizationData, $"/spawnicons/{Model.ResourcePath}_c.png", false) *@
-			?? ThumbnailCache.Get(Model);
+		return Texture.Load($"thumb:{Model.ResourcePath}", false);
 	}
 }
