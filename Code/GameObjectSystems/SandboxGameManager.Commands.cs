@@ -36,12 +36,9 @@ public partial class SandboxGameManager
 		if ( model == null || model.IsError )
 			return;
 
-		var go = new GameObject
-		{
-			WorldPosition = endPos + Vector3.Down * model.PhysicsBounds.Mins.z,
-			WorldRotation = modelRotation,
-			Tags = { "solid" }
-		};
+		var go = new GameObject(false, $"Prop ({modelname})");
+		go.Tags.Add("solid", "removable");
+		go.WorldTransform = new Transform(endPos + Vector3.Down * model.PhysicsBounds.Mins.z, modelRotation);
 
 		var prop = go.AddComponent<Prop>();
 		prop.Model = model;
@@ -52,7 +49,7 @@ public partial class SandboxGameManager
 		}
 
 		var propHelper = go.AddComponent<PropHelper>();
-
+		
 		var rb = propHelper.Rigidbody;
 		if ( rb.IsValid() )
 		{
@@ -61,13 +58,13 @@ public partial class SandboxGameManager
 			{
 				if ( !shape.IsMeshShape )
 					continue;
-
+		
 				var newCollider = go.AddComponent<BoxCollider>();
 				newCollider.Scale = model.PhysicsBounds.Size;
 			}
 		}
 
-		go.NetworkSpawn( playerObject.Network.Owner );
+		go.NetworkSpawn( true, playerObject.Network.Owner );
 		go.Network.SetOrphanedMode( NetworkOrphaned.Host );
 		IPropSpawnedEvent.Post( x => x.OnSpawned( prop ) );
 
