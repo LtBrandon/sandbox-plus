@@ -33,7 +33,7 @@
           "Scale": "1,1,1",
           "Rotation": "0,0,0,1"
         },
-        "ColorCrystalGlass": "0.11236,0.32988,0.45581,1",
+        "ColorCrystalGlass": "0.1761,0.50054,0.68837,1",
         "ColorCrystalInside": "0.63922,0.8,0.8902,1",
         "EndPointEffectPrefab": {
           "_type": "gameobject",

@@ -1,35 +1,52 @@
 {
   "RootObject": {
     "__guid": "543861fb-2906-4175-8265-02b4e8a8e1d7",
+    "__version": 2,
     "Flags": 0,
     "Name": "w_gravgun",
+    "Position": "0,0,0",
+    "Rotation": "0,0,0,1",
+    "Scale": "1,1,1",
     "Tags": "item,weapon",
     "Enabled": true,
+    "NetworkMode": 2,
+    "NetworkFlags": 0,
+    "NetworkOrphaned": 0,
+    "NetworkTransmit": true,
+    "OwnerTransfer": 1,
     "Components": [
       {
         "__type": "GravGun",
         "__guid": "4d491d3e-213c-420c-8830-4f1682d641f6",
+        "__enabled": true,
+        "Flags": 0,
         "AngularDampingRatio": 1,
         "AngularFrequency": 10,
         "AttachDistance": 150,
         "BoneOffset": {
-          "UniformScale": 1,
-          "IsValid": true,
-          "ForwardRay": {
-            "Forward": "1,0,0"
-          },
+          "Position": "0,0,0",
           "Scale": "1,1,1",
           "Rotation": "0,0,0,1"
         },
         "BreakLinearForce": 2000,
+        "ColorCrystalGlass": "1,0.72941,0.60392,1",
+        "ColorCrystalInside": "0.67451,0.25098,0,1",
         "DropCooldown": 0.5,
+        "GrabbedObject": null,
         "Handedness": "Both",
         "HoldDistance": 50,
         "HoldType": "Pistol",
         "LinearDampingRatio": 1,
         "LinearFrequency": 10,
+        "MaxHoldDistanceBeforeDrop": 150,
         "MaxPullDistance": 2000,
         "MaxPushDistance": 500,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
         "ParentBone": "hold_r",
         "PrimaryRate": 5,
         "PullForce": 20,
@@ -40,24 +57,49 @@
         "ViewModelPrefab": {
           "_type": "gameobject",
           "prefab": "prefabs/weapons/gravgun/v_gravgun.prefab"
-        }
+        },
+        "WorldModelPrefab": null
       }
     ],
     "Children": [
       {
         "__guid": "8b861444-9fd6-405b-8f16-04f00eeca70b",
+        "__version": 2,
         "Flags": 0,
         "Name": "Model",
+        "Position": "0,0,0",
+        "Rotation": "0,0,0,1",
+        "Scale": "1,1,1",
+        "Tags": "",
         "Enabled": true,
+        "NetworkMode": 2,
+        "NetworkFlags": 0,
+        "NetworkOrphaned": 0,
+        "NetworkTransmit": true,
+        "OwnerTransfer": 1,
         "Components": [
           {
             "__type": "Sandbox.SkinnedModelRenderer",
             "__guid": "4601d044-1e9a-4769-b7bf-74b1dff621ab",
+            "__enabled": true,
+            "Flags": 0,
+            "AnimationGraph": null,
             "BodyGroups": 18446744073709551615,
+            "BoneMergeTarget": null,
             "CreateAttachments": false,
             "CreateBoneObjects": false,
+            "LodOverride": null,
+            "MaterialGroup": null,
+            "MaterialOverride": null,
+            "Materials": null,
             "Model": "weapons/rust_pistol/rust_pistol.vmdl",
             "Morphs": {},
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null,
             "Parameters": {
               "bools": {},
               "ints": {},
@@ -65,6 +107,7 @@
               "vectors": {},
               "rotations": {}
             },
+            "PlaybackRate": 1,
             "RenderOptions": {
               "GameLayer": true,
               "OverlayLayer": false,
@@ -72,44 +115,47 @@
               "AfterUILayer": false
             },
             "RenderType": "On",
+            "Sequence": {
+              "Name": null,
+              "Looping": true,
+              "Blending": false
+            },
             "Tint": "1,1,1,1",
             "UseAnimGraph": true
           }
-        ]
+        ],
+        "Children": []
       }
     ],
-    "__variables": [],
     "__properties": {
-      "FixedUpdateFrequency": 50,
-      "MaxFixedUpdates": 5,
-      "NetworkFrequency": 30,
       "NetworkInterpolation": true,
-      "PhysicsSubSteps": 1,
-      "ThreadedAnimation": true,
       "TimeScale": 1,
-      "UseFixedUpdate": true,
+      "WantsSystemScene": true,
       "Metadata": {},
       "NavMesh": {
         "Enabled": false,
         "IncludeStaticBodies": true,
         "IncludeKeyframedBodies": true,
-        "EditorAutoUpdate": true,
+        "EditorAutoUpdate": false,
         "AgentHeight": 64,
         "AgentRadius": 16,
         "AgentStepSize": 18,
         "AgentMaxSlope": 40,
         "ExcludedBodies": "",
-        "IncludedBodies": ""
+        "IncludedBodies": "",
+        "DeferGeneration": false,
+        "CustomBounds": false
       }
-    }
+    },
+    "__variables": []
   },
+  "ResourceVersion": 2,
   "ShowInMenu": false,
   "MenuPath": null,
   "MenuIcon": null,
   "DontBreakAsTemplate": false,
-  "ResourceVersion": 1,
   "__references": [
     "rust.rust_pistol#43964"
   ],
-  "__version": 1
+  "__version": 2
 }

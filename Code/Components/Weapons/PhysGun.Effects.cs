@@ -89,14 +89,12 @@ public partial class PhysGun
 		{
 			_matCrystal = viewmodelRenderer.Materials.GetOriginal(3).CreateCopy();
 			viewmodelRenderer.Materials.SetOverride( 3, _matCrystal );
-			Log.Info( "PhysGun: Created crystal material" );
 		}
 
 		if (_matCrystalInside is null)
 		{
 			_matCrystalInside = viewmodelRenderer.Materials.GetOriginal(4).CreateCopy();
 			viewmodelRenderer.Materials.SetOverride( 4, _matCrystalInside );
-			Log.Info( "PhysGun: Created crystal inside material" );
 		}
 
 		_matCrystal?.Set( "g_flTintColor", ColorCrystalGlass );

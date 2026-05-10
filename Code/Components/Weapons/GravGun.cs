@@ -10,7 +10,7 @@ public partial class GravGun : BaseWeapon, IPlayerEvent
 	[Property] public float PushForce => 1000.0f;
 	[Property] public float ThrowForce => 2000.0f;
 	[Property] public float HoldDistance => 50.0f;
-	[Property] public float MaxHoldDistanceBeforeDrop = 100f;
+	[Property] public float MaxHoldDistanceBeforeDrop = 150f;
 	[Property] public float AttachDistance => 150.0f;
 	[Property] public float DropCooldown => 0.5f;
 	[Property] public float BreakLinearForce => 2000.0f;
@@ -23,6 +23,14 @@ public partial class GravGun : BaseWeapon, IPlayerEvent
 
 	GameObject lastGrabbed = null;
 
+	[Property]
+	public Color ColorCrystalGlass { get; set; } = Color.White;
+
+	[Property]
+	public Color ColorCrystalInside { get; set; } = Color.White;
+
+	private Material _matCrystal = null;
+	private Material _matCrystalInside = null;
 	private bool prongsActive = false;
 	private float ProngsState { get; set; } = 0;
 	PhysicsBody _heldBody;
@@ -63,6 +71,12 @@ public partial class GravGun : BaseWeapon, IPlayerEvent
 		SetRendererAnimParam( "moveback", 1 );
 	}
 
+	protected override void OnDisabled()
+	{
+		base.OnDisabled();
+		CleanupMaterials();
+	}
+
 	protected override void OnUpdate()
 	{
 		Move();
@@ -71,8 +85,41 @@ public partial class GravGun : BaseWeapon, IPlayerEvent
 		{
 			ProngsState = ProngsState.LerpTo( prongsActive ? 1 : 0, Time.Delta * 10f );
 			SetRendererAnimParam( "prongs", ProngsState );
-			ViewModel?.Renderer.SceneObject.Attributes.Set( "colortint", Color.FromBytes( 172, 64, 0 ) );
+			UpdateMaterials();
 		}
+	}
+
+	private void CleanupMaterials()
+	{
+		_matCrystal = null;
+		_matCrystalInside = null;
+	}
+
+	private float _innerColorStrength = 1f;
+	private void UpdateMaterials()
+	{
+		var viewmodelRenderer = ViewModelObject?.GetComponentInChildren<ModelRenderer>();
+		if ( viewmodelRenderer is null )
+			return;
+
+		if ( _matCrystal is null )
+		{
+			_matCrystal = viewmodelRenderer.Materials.GetOriginal( 3 ).CreateCopy();
+			viewmodelRenderer.Materials.SetOverride( 3, _matCrystal );
+		}
+
+		if ( _matCrystalInside is null )
+		{
+			_matCrystalInside = viewmodelRenderer.Materials.GetOriginal( 4 ).CreateCopy();
+			viewmodelRenderer.Materials.SetOverride( 4, _matCrystalInside );
+		}
+
+		_matCrystal?.Set( "g_flTintColor", ColorCrystalGlass );
+
+		var strengthMult = HeldBody.IsValid() ? 3f : Input.Down( "attack2" ) ? 1.75f : 1f;
+		strengthMult *= MathF.Sin( Time.Now * (HeldBody.IsValid() ? 15f : Input.Down( "attack2" ) ? 5f : 1f) ) * 0.5f + 1f;
+		_innerColorStrength = float.Lerp( _innerColorStrength, strengthMult, Time.Delta * 10f );
+		_matCrystalInside?.Set( "g_vColorTint", ColorCrystalInside * _innerColorStrength );
 	}
 
 	TimeSince timeSinceImpulse;
