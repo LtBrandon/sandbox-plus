@@ -1,23 +1,40 @@
-﻿public partial class PhysGun
+﻿using Sandbox.Rendering;
+using Sandbox.Utility;
+
+public partial class PhysGun
 {
-	LegacyParticleSystem beam;
-	LegacyParticleSystem endNoHit;
+	[Property] public LineRenderer BeamRenderer { get; set; }
+	[Property] public GameObject EndPointEffectPrefab { get; set; }
+	[Property] public GameObject FreezeEffectPrefab { get; set; }
+	[Property] public GameObject UnFreezeEffectPrefab { get; set; }
+	[Property] public GameObject GrabEffectPrefab { get; set; }
+	
+	GameObject _endPointEffect;
+	GameObject _grabEffect;
 
 	GameObject lastGrabbedObject;
+	
+	Vector3.SpringDamped middleSpring = new Vector3.SpringDamped( 0, 0 );
+	private float _prevBeamDistance = 0;
 
 	[Rpc.Broadcast]
 	protected virtual void KillEffects()
 	{
-		if ( beam.IsValid() )
+		if ( _endPointEffect.IsValid() )
 		{
-			beam?.GameObject?.Destroy();
-			beam = null;
+			_endPointEffect?.Destroy();
+			_endPointEffect = null;
 		}
 
-		if ( endNoHit.IsValid() )
+		if ( _grabEffect.IsValid() )
 		{
-			endNoHit?.GameObject?.Destroy();
-			endNoHit = null;
+			_grabEffect?.Destroy();
+			_grabEffect = null;
+		}
+
+		if (BeamRenderer.IsValid())
+		{
+			BeamRenderer.GameObject.Enabled = false;
 		}
 
 		DisableHighlights( lastGrabbedObject );
@@ -62,23 +79,20 @@
 		}
 
 		var startPos = Owner.EyeTransform.Position;
+		var endPos = startPos + Owner.EyeTransform.Forward * MaxTargetDistance;
 		var dir = Owner.EyeTransform.Forward;
 
-		var tr = Scene.Trace.Ray( startPos, startPos + dir * MaxTargetDistance )
+		var tr = Scene.Trace.Ray( startPos, endPos )
 			.UseHitboxes()
 			.IgnoreGameObject( Owner.GameObject )
 			.WithAllTags( "solid" )
 			.WithoutTags( "player" )
 			.Run();
 
-		// LegacyParticleSystem is fully broken now, todo replace
-		// beam ??= CreateBeam( tr.EndPosition );
-
-		if ( beam.IsValid() )
-		{
-			beam.WorldPosition = Attachment( "muzzle" ).Position + dir * 10f;
-			beam.WorldRotation = Attachment( "muzzle" ).Rotation;
-		}
+		var muzzleAttachment = Attachment("muzzle");
+		var rotation = muzzleAttachment.Rotation;
+		startPos = muzzleAttachment.Position + dir * 10f;
+		endPos = tr.EndPosition;
 
 		if ( GrabbedObject.IsValid() && !GrabbedObject.Tags.Contains( "world" ) && HeldBody.IsValid() )
 		{
@@ -89,7 +103,7 @@
 				var physBody = physGroup.GetBody( GrabbedBone );
 				if ( physBody != null )
 				{
-					beam?.SceneObject.SetControlPoint( 1, physBody.Transform.PointToWorld( GrabbedPos ) );
+					endPos = physBody.Transform.PointToWorld(GrabbedPos);
 				}
 			}
 			else
@@ -97,13 +111,8 @@
 				if ( !HeldBody.IsValid() )
 					return;
 
-				beam?.SceneObject.SetControlPoint( 1, HeldBody.Transform.PointToWorld( GrabbedPos ) );
+				endPos = HeldBody.Transform.PointToWorld(GrabbedPos);
 			}
-
-			lastBeamPos = HeldBody.Position + HeldBody.Rotation * GrabbedPos;
-
-			endNoHit?.GameObject.Destroy();
-			endNoHit = null;
 
 			if ( GrabbedObject.GetComponent<ModelRenderer>().IsValid() )
 			{
@@ -126,27 +135,110 @@
 		}
 		else
 		{
-			lastBeamPos = tr.EndPosition;
-
-			Vector3.Lerp( lastBeamPos, tr.EndPosition, Time.Delta * 10 );
-
-			if ( beam?.IsValid() == true )
-				beam?.SceneObject.SetControlPoint( 1, lastBeamPos );
-
-			// LegacyParticleSystem is fully broken now, todo replace
-			// endNoHit ??= Particles.MakeParticleSystem( "particles/physgun_end_nohit.vpcf", new Transform( lastBeamPos ), 0 );
-			// endNoHit.SceneObject.SetControlPoint( 0, lastBeamPos );
-			// endNoHit.WorldPosition = lastBeamPos;
+			endPos = tr.EndPosition;
 		}
-	}
+		
+		var endTx = new Transform(endPos, rotation);
+		
+		if ( grabbed )
+		{
+			if ( _endPointEffect != null )
+			{
+				ITemporaryEffect.DisableLoopingEffects( _endPointEffect );
+				_endPointEffect = null;
+			}
 
-	private LegacyParticleSystem CreateBeam( Vector3 endPos ) =>
-		Particles.MakeParticleSystem( "particles/physgun_beam.vpcf", new Transform( endPos ), 0 );
+
+			if ( !_grabEffect.IsValid() )
+			{
+				_grabEffect = GrabEffectPrefab.Clone( endTx );
+			}
+
+			if ( _grabEffect.IsValid() )
+			{
+				_grabEffect.WorldTransform = endTx;
+			}
+
+		}
+		else
+		{
+			if ( _grabEffect != null )
+			{
+				_grabEffect.Destroy();
+				_grabEffect = null;
+			}
+
+			if ( !_endPointEffect.IsValid() )
+			{
+				_endPointEffect = EndPointEffectPrefab.Clone( endTx );
+			}
+
+			if ( _endPointEffect.IsValid() )
+			{
+				_endPointEffect.WorldTransform = endTx;
+			}
+		}
+		
+		bool justEnabled = !BeamRenderer.GameObject.Enabled;
+		
+		if ( BeamRenderer.VectorPoints == null || BeamRenderer.VectorPoints.Count != 4 )
+			BeamRenderer.VectorPoints = new List<Vector3>( [0, 0, 0, 0] );
+		
+		var distance = startPos.Distance( endPos );
+		var targetMiddle = startPos + rotation.Forward * distance * 0.33f;
+		targetMiddle += Noise.FbmVector(2, Time.Now * 400f, Time.Now * 100f);
+		
+		if ( !justEnabled )
+		{
+			// If the beam halved or more in a single frame, snap the spring to the new position to avoid shakiness
+			if ( _prevBeamDistance > 1f && distance / _prevBeamDistance < 0.5f )
+			{
+				middleSpring = new Vector3.SpringDamped( targetMiddle, targetMiddle, 4, 0.2f );
+			}
+
+			// Ensure the middle point is never behind the first one
+			var alongFwd = Vector3.Dot( middleSpring.Current - startPos, rotation.Forward );
+			if ( alongFwd < 0 )
+			{
+				var clamped = middleSpring.Current - rotation.Forward * alongFwd;
+				middleSpring = new Vector3.SpringDamped( clamped, targetMiddle, 4, 0.2f );
+			}
+		}
+
+		lastBeamPos = endPos;
+		BeamRenderer.VectorPoints[0] = startPos;
+		BeamRenderer.VectorPoints[1] = middleSpring.Current;
+		middleSpring.Target = targetMiddle;
+		middleSpring.Update( Time.Delta );
+		BeamRenderer.VectorPoints[2] = Vector3.Lerp(endPos + rotation.Backward * 10, BeamRenderer.VectorPoints[1], 0.3f + MathF.Sin(Time.Now * 10f) * 0.2f);
+		BeamRenderer.VectorPoints[3] = endPos;
+		
+		if ( justEnabled )
+		{
+			BeamRenderer.GameObject.Enabled = true;
+			_prevBeamDistance = distance;
+			BeamRenderer.VectorPoints[1] = targetMiddle;
+			middleSpring = new Vector3.SpringDamped( targetMiddle, targetMiddle, 4, 0.2f );
+		}
+
+	}
 
 	private void FreezeEffects()
 	{
-		// LegacyParticleSystem is fully broken now, todo replace
-		// return Particles.MakeParticleSystem( "particles/physgun_freeze.vpcf", new Transform( lastBeamPos ), 4 );
+		var effect = FreezeEffectPrefab.Clone( HeldBody.GameObject.WorldTransform );
+		foreach ( var emitter in effect.GetComponentsInChildren<ParticleModelEmitter>() )
+		{
+			emitter.Target = HeldBody.GameObject;
+		}
+	}
+
+	private void UnFreezeEffects()
+	{
+		var effect = UnFreezeEffectPrefab.Clone( HeldBody.GameObject.WorldTransform );
+		foreach ( var emitter in effect.GetComponentsInChildren<ParticleModelEmitter>() )
+		{
+			emitter.Target = HeldBody.GameObject;
+		}
 	}
 
 	protected override void OnDestroy()

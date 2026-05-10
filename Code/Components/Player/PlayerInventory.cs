@@ -10,7 +10,7 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 
 	public void GiveDefaultWeapons()
 	{
-		Pickup( "prefabs/weapons/physgun/w_physgun.prefab" );
+		Pickup( "prefabs/weapons/physgun/weapon_physgun.prefab" );
 		Pickup( "prefabs/weapons/gravgun/w_gravgun.prefab" );
 		Pickup( "prefabs/weapons/toolgun/w_toolgun-gmod.prefab" );
 		Pickup( "prefabs/weapons/pistol/w_pistol.prefab" );
@@ -45,7 +45,7 @@ public sealed class PlayerInventory : Component, IPlayerEvent
 
 	private void Pickup( string prefabName )
 	{
-		var prefab = GameObject.Clone( prefabName, global::Transform.Zero, Owner.Body, false );
+		var prefab = GameObject.Clone( prefabName, global::Transform.Zero, Owner.GameObject, false );
 		prefab.NetworkSpawn( false, Network.Owner );
 
 		var weapon = prefab.Components.Get<BaseWeapon>( true );

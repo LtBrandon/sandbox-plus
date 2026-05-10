@@ -1,0 +1,304 @@
+{
+  "RootObject": {
+    "__guid": "543861fb-2906-4175-8265-02b4e8a8e1d7",
+    "__version": 2,
+    "Flags": 0,
+    "Name": "weapon_physgun",
+    "Position": "0,0,0",
+    "Rotation": "0,0,0,1",
+    "Scale": "1,1,1",
+    "Tags": "item,weapon",
+    "Enabled": true,
+    "NetworkMode": 2,
+    "NetworkFlags": 0,
+    "NetworkOrphaned": 0,
+    "NetworkTransmit": true,
+    "OwnerTransfer": 1,
+    "Components": [
+      {
+        "__type": "PhysGun",
+        "__guid": "fed3414c-e272-4756-9db5-b1bffab412d4",
+        "__enabled": true,
+        "Flags": 0,
+        "AngularDampingRatio": 1,
+        "AngularFrequency": 20,
+        "BeamRenderer": {
+          "_type": "component",
+          "component_id": "df9759c6-941a-4f38-87ed-2649d26b77fc",
+          "go": "35c2ba87-5728-440c-ad84-b1e7e96d8d27",
+          "component_type": "LineRenderer"
+        },
+        "BoneOffset": {
+          "Position": "0,0,0",
+          "Scale": "1,1,1",
+          "Rotation": "0,0,0,1"
+        },
+        "EndPointEffectPrefab": {
+          "_type": "gameobject",
+          "prefab": "prefabs/weapons/physgun/effects/beam-end.prefab"
+        },
+        "FreezeEffectPrefab": {
+          "_type": "gameobject",
+          "prefab": "prefabs/weapons/physgun/effects/freeze.prefab"
+        },
+        "GrabEffectPrefab": {
+          "_type": "gameobject",
+          "prefab": "prefabs/weapons/physgun/effects/grab.prefab"
+        },
+        "Handedness": "Both",
+        "HoldType": "Pistol",
+        "LinearDampingRatio": 1,
+        "LinearFrequency": 20,
+        "MaxTargetDistance": 10000,
+        "MinTargetDistance": 0,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "ParentBone": "hold_r",
+        "PrimaryRate": 5,
+        "ReloadTime": 3,
+        "RotateSnapAt": 45,
+        "RotateSpeed": 0.125,
+        "SecondaryRate": 15,
+        "TargetDistanceSpeed": 25,
+        "UnFreezeEffectPrefab": {
+          "_type": "gameobject",
+          "prefab": "prefabs/weapons/physgun/effects/unfreeze.prefab"
+        },
+        "ViewModelPrefab": {
+          "_type": "gameobject",
+          "prefab": "prefabs/weapons/physgun/v_physgun.prefab"
+        },
+        "WorldModelPrefab": {
+          "_type": "gameobject",
+          "prefab": "prefabs/weapons/physgun/w_physgun.prefab"
+        }
+      }
+    ],
+    "Children": [
+      {
+        "__guid": "11af0201-9f7d-4e7f-acd4-6e017d7f0f84",
+        "__version": 2,
+        "Flags": 0,
+        "Name": "Model",
+        "Position": "0,0,0",
+        "Rotation": "0,0,0,1",
+        "Scale": "1,1,1",
+        "Tags": "",
+        "Enabled": false,
+        "NetworkMode": 2,
+        "NetworkFlags": 0,
+        "NetworkOrphaned": 0,
+        "NetworkTransmit": true,
+        "OwnerTransfer": 1,
+        "Components": [
+          {
+            "__type": "Sandbox.SkinnedModelRenderer",
+            "__guid": "4601d044-1e9a-4769-b7bf-74b1dff621ab",
+            "__enabled": true,
+            "Flags": 0,
+            "AnimationGraph": null,
+            "BodyGroups": 18446744073709551615,
+            "BoneMergeTarget": null,
+            "CreateAttachments": false,
+            "CreateBoneObjects": false,
+            "LodOverride": null,
+            "MaterialGroup": null,
+            "MaterialOverride": null,
+            "Materials": null,
+            "Model": "weapons/rust_pistol/rust_pistol.vmdl",
+            "Morphs": {},
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null,
+            "Parameters": {
+              "bools": {},
+              "ints": {},
+              "floats": {},
+              "vectors": {},
+              "rotations": {}
+            },
+            "PlaybackRate": 1,
+            "RenderOptions": {
+              "GameLayer": true,
+              "OverlayLayer": false,
+              "BloomLayer": false,
+              "AfterUILayer": false
+            },
+            "RenderType": "On",
+            "Sequence": {
+              "Name": null,
+              "Looping": true,
+              "Blending": false
+            },
+            "Tint": "1,1,1,1",
+            "UseAnimGraph": true
+          }
+        ],
+        "Children": []
+      },
+      {
+        "__guid": "cf3daeb0-93c9-479f-adf4-1ae4d7e43fe9",
+        "__version": 2,
+        "Flags": 0,
+        "Name": "Muzzle",
+        "Position": "11,0.0504247509,4.57499981",
+        "Rotation": "0,0,0,1",
+        "Scale": "1,1,1",
+        "Tags": "",
+        "Enabled": true,
+        "NetworkMode": 2,
+        "NetworkFlags": 0,
+        "NetworkOrphaned": 0,
+        "NetworkTransmit": true,
+        "OwnerTransfer": 1,
+        "Components": [],
+        "Children": []
+      },
+      {
+        "__guid": "35c2ba87-5728-440c-ad84-b1e7e96d8d27",
+        "__version": 2,
+        "Flags": 0,
+        "Name": "Beam",
+        "Position": "0,0,0",
+        "Rotation": "0,0,0,1",
+        "Scale": "1.5,1.5,1.5",
+        "Tags": "",
+        "Enabled": false,
+        "NetworkMode": 2,
+        "NetworkFlags": 0,
+        "NetworkOrphaned": 0,
+        "NetworkTransmit": true,
+        "OwnerTransfer": 1,
+        "Components": [
+          {
+            "__type": "Sandbox.LineRenderer",
+            "__guid": "df9759c6-941a-4f38-87ed-2649d26b77fc",
+            "__enabled": true,
+            "Flags": 0,
+            "Additive": true,
+            "AutoCalculateNormals": true,
+            "CastShadows": false,
+            "Color": {
+              "blend": "Linear",
+              "color": [
+                {
+                  "t": 0.51890755,
+                  "c": "1.74419,2.7907,3,1"
+                }
+              ],
+              "alpha": []
+            },
+            "CylinderSegments": 12,
+            "DepthFeather": 4,
+            "EndCap": "None",
+            "Face": "Camera",
+            "FogStrength": 1,
+            "Lighting": false,
+            "OnComponentDestroy": null,
+            "OnComponentDisabled": null,
+            "OnComponentEnabled": null,
+            "OnComponentFixedUpdate": null,
+            "OnComponentStart": null,
+            "OnComponentUpdate": null,
+            "Opaque": false,
+            "Points": [],
+            "RenderOptions": {
+              "GameLayer": true,
+              "OverlayLayer": false,
+              "BloomLayer": false,
+              "AfterUILayer": false
+            },
+            "SplineBias": 0,
+            "SplineContinuity": 0,
+            "SplineInterpolation": 8,
+            "SplineTension": 0,
+            "StartCap": "None",
+            "Texturing": {
+              "Texture": null,
+              "Material": "prefabs/weapons/physgun/physgun_beam.vmat",
+              "WorldSpace": true,
+              "UnitsPerTexture": 512,
+              "Scale": 1,
+              "Offset": 0,
+              "Scroll": 1,
+              "FilterMode": "Anisotropic",
+              "TextureAddressMode": "Wrap",
+              "Clamp": false
+            },
+            "UseVectorPoints": true,
+            "VectorPoints": [
+              "0,0,0",
+              "163.400208,0,0",
+              "307.799988,126.599998,0"
+            ],
+            "Width": {
+              "rangey": "0.167400002,5",
+              "frames": [
+                {
+                  "x": 0,
+                  "y": 0.676678,
+                  "in": -0.9629625,
+                  "out": 0.9629625,
+                  "mode": "Mirrored"
+                },
+                {
+                  "x": 0.46773395,
+                  "y": 1,
+                  "in": 0,
+                  "out": 0,
+                  "mode": "Mirrored"
+                },
+                {
+                  "x": 1,
+                  "y": 0,
+                  "in": 5.7647076,
+                  "out": -5.7647076,
+                  "mode": "Mirrored"
+                }
+              ]
+            },
+            "Wireframe": false
+          }
+        ],
+        "Children": []
+      }
+    ],
+    "__properties": {
+      "NetworkInterpolation": true,
+      "TimeScale": 1,
+      "WantsSystemScene": true,
+      "Metadata": {},
+      "NavMesh": {
+        "Enabled": false,
+        "IncludeStaticBodies": true,
+        "IncludeKeyframedBodies": true,
+        "EditorAutoUpdate": false,
+        "AgentHeight": 64,
+        "AgentRadius": 16,
+        "AgentStepSize": 18,
+        "AgentMaxSlope": 40,
+        "ExcludedBodies": "",
+        "IncludedBodies": "",
+        "DeferGeneration": false,
+        "CustomBounds": false
+      }
+    },
+    "__variables": []
+  },
+  "ResourceVersion": 2,
+  "ShowInMenu": false,
+  "MenuPath": null,
+  "MenuIcon": null,
+  "DontBreakAsTemplate": false,
+  "__references": [
+    "rust.rust_pistol#43964"
+  ],
+  "__version": 2
+}

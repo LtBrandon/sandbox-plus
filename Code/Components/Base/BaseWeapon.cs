@@ -8,6 +8,7 @@ using Sandbox.Citizen;
 public partial class BaseWeapon : Component, SandboxPlus.PlayerController.IEvents
 {
 	[Property] public GameObject ViewModelPrefab { get; set; }
+	[Property] public GameObject WorldModelPrefab { get; set; }
 	[Property] public string ParentBone { get; set; } = "hold_r";
 	[Property] public Transform BoneOffset { get; set; } = new Transform( 0 );
 	[Property] public CitizenAnimationHelper.HoldTypes HoldType { get; set; } = CitizenAnimationHelper.HoldTypes.HoldItem;
@@ -23,7 +24,8 @@ public partial class BaseWeapon : Component, SandboxPlus.PlayerController.IEvent
 	[Sync] public RealTimeSince TimeSinceSecondaryAttack { get; set; }
 
 	public ViewModel ViewModel => Scene?.Camera?.Components.GetInDescendantsOrSelf<ViewModel>( true );
-	public SkinnedModelRenderer WorldModel => GameObject?.GetComponentInChildren<SkinnedModelRenderer>( true );
+	public GameObject WorldModelObject = null;
+	public SkinnedModelRenderer WorldModel => WorldModelObject?.GetComponentInChildren<SkinnedModelRenderer>( true );
 	public SkinnedModelRenderer LocalWorldModel => !Owner.IsValid() || !Owner.Controller.IsValid() || Owner.Controller.ThirdPerson || IsProxy ? WorldModel : ViewModel?.Renderer;
 	public Player Owner => GameObject?.Root?.GetComponent<Player>();
 
@@ -53,8 +55,8 @@ public partial class BaseWeapon : Component, SandboxPlus.PlayerController.IEvent
 		var obj = Owner?.Controller?.Renderer?.GetBoneObject( ParentBone );
 		if ( obj is not null )
 		{
-			GameObject.Parent = obj;
-			GameObject.LocalTransform = BoneOffset.WithScale( 1 );
+			WorldModelObject?.Parent = obj;
+			WorldModelObject?.LocalTransform = BoneOffset.WithScale( 1 );
 		}
 	}
 
@@ -66,14 +68,43 @@ public partial class BaseWeapon : Component, SandboxPlus.PlayerController.IEvent
 
 		if ( IsProxy ) return;
 
-		var go = ViewModelPrefab?.Clone( new CloneConfig()
+		var vm = ViewModelPrefab?.Clone( new CloneConfig()
 		{
 			StartEnabled = true,
 			Parent = Scene.Camera.GameObject,
 			Transform = Scene.Camera.WorldTransform
 		} );
 
-		go.NetworkMode = NetworkMode.Never;
+		if (vm.IsValid())
+		{
+			vm.Flags |= GameObjectFlags.NotSaved | GameObjectFlags.NotNetworked;
+			vm.NetworkMode = NetworkMode.Never;
+			vm.Tags.Add( "firstperson", "viewmodel" );
+		}
+
+		var wm = WorldModelPrefab?.Clone(new CloneConfig()
+		{
+			StartEnabled = true,
+			Parent = GameObject,
+			Transform = WorldTransform
+		});
+
+		if (wm.IsValid())
+		{
+			wm.Flags |= GameObjectFlags.NotSaved | GameObjectFlags.NotNetworked;
+			WorldModelObject = wm;
+		}
+		else
+		{
+			WorldModelObject = GameObject;
+		}
+		
+		var obj = Owner?.Controller?.Renderer?.GetBoneObject( ParentBone );
+		if ( obj is not null )
+		{
+			WorldModelObject?.Parent = obj;
+			WorldModelObject?.LocalTransform = BoneOffset.WithScale( 1 );
+		}
 	}
 
 	[Rpc.Broadcast]
