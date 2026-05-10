@@ -1,4 +1,5 @@
 @using Sandbox;
+@using Sandbox.Mounting
 @using Sandbox.UI;
 @inherits Panel
 @namespace Sandbox.UI
@@ -12,7 +13,21 @@
 				<i>category</i>
 				All Models
 			</div>
-			<FileTree class="root-file-tree" FileFilter="*.vmdl_c" Selected=@(SelectedFolder) Root=@(true) FileSystem=@(FileSystem.Mounted) Path=@("") ShowFiles=@(false) OnFolderSelect=@OnFolderSelect />
+			<div class="entry @(ShowMounted ? "selected" : "")" onclick=@(() => OnMountedSelected(""))>
+				<i>@(ShowMounted ? "folder_open" : "folder")</i>
+				Mounted Games
+			</div>
+			@if (ShowMounted)
+			{
+				@foreach (var entry in Sandbox.Mounting.Directory.GetAll())
+				{
+					<div class="entry mount @(SelectedFolder == $"//MOUNTED/{entry.Ident}" ? "selected" : "")" onclick=@(() => OnMountedSelected(entry.Ident))>
+						<i>@(entry.Available ? "folder" : "lock")</i>
+						@entry.Title
+					</div>
+				}
+			}
+			<FileTree class="root-file-tree" FileFilter="*.vmdl_c" Selected=@(SelectedFolder) Root=@(true) FileSystem=@(FileSystem.Mounted) Path=@("") ShowFiles=@(false) OnFolderSelect=@OnFolderSelect/>
 		</div>
 	</div>
 	<div class="canvas">
@@ -25,6 +40,7 @@
 
 @code
 {
+	bool ShowMounted = false;
 	MenuTextEntry SearchEntry;
 	string SelectedFolder = "";
 	string SearchQuery = "";
@@ -59,6 +75,41 @@
 	{
 		SelectedFolder = "";
 		Search(SearchQuery);
+	}
+
+	void OnMountedSelected(string game)
+	{
+		ModelList.Clear();
+		
+		if (game != "")
+		{
+			SelectedFolder = $"//MOUNTED/{game}";
+		}
+		else
+		{
+			SelectedFolder = "//MOUNTED";
+			ShowMounted = !ShowMounted;
+			return;
+		}
+		
+		var mount = Sandbox.Mounting.Directory.Mount(game).Result;
+		if (mount is null)
+		{
+			Log.Error($"Failed to mount {game}");
+			return;
+		}
+		
+		var files = mount.Resources
+			.Where( x => x.Type == ResourceType.Model )
+			.Where( x => !x.Flags.Contains( Sandbox.Mounting.ResourceFlags.DeveloperOnly ) ); // Hide dev-only junk models
+
+		foreach (var file in files)
+		{
+			if (file.GetOrCreate().Result is Model model)
+			{
+				ModelList.Add(model);
+			}
+		}
 	}
 
 	void Search(string value)
