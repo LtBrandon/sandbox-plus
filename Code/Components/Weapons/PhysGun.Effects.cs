@@ -9,6 +9,15 @@ public partial class PhysGun
 	[Property] public GameObject UnFreezeEffectPrefab { get; set; }
 	[Property] public GameObject GrabEffectPrefab { get; set; }
 	
+	[Property]
+	public Color ColorCrystalGlass { get; set; } = Color.White;
+
+	[Property]
+	public Color ColorCrystalInside { get; set; } = Color.White;
+
+	private Material _matCrystal = null;
+	private Material _matCrystalInside = null;
+	
 	GameObject _endPointEffect;
 	GameObject _grabEffect;
 
@@ -63,16 +72,53 @@ public partial class PhysGun
 		}
 	}
 
+	private void CleanupMaterials()
+	{
+		_matCrystal = null;
+		_matCrystalInside = null;
+	}
+
+	private float _innerColorStrength = 1f;
+	private void UpdateMaterials()
+	{
+		var viewmodelRenderer = ViewModelObject?.GetComponentInChildren<ModelRenderer>();
+		if (viewmodelRenderer is null)
+			return;
+		
+		if (_matCrystal is null)
+		{
+			_matCrystal = viewmodelRenderer.Materials.GetOriginal(3).CreateCopy();
+			viewmodelRenderer.Materials.SetOverride( 3, _matCrystal );
+			Log.Info( "PhysGun: Created crystal material" );
+		}
+
+		if (_matCrystalInside is null)
+		{
+			_matCrystalInside = viewmodelRenderer.Materials.GetOriginal(4).CreateCopy();
+			viewmodelRenderer.Materials.SetOverride( 4, _matCrystalInside );
+			Log.Info( "PhysGun: Created crystal inside material" );
+		}
+
+		_matCrystal?.Set( "g_flTintColor", ColorCrystalGlass );
+
+		var strengthMult = Beaming ? 3f : 1f;
+		strengthMult *= MathF.Sin( Time.Now * (Beaming ? 15f : 1f) ) * 0.5f + 1f;
+		_innerColorStrength = float.Lerp( _innerColorStrength, strengthMult, Time.Delta * 10f );
+		_matCrystalInside?.Set( "g_vColorTint", ColorCrystalInside * _innerColorStrength );
+	}
+
 	Vector3 lastBeamPos;
 
 	protected virtual void UpdateEffects()
 	{
+		UpdateMaterials();
+		
 		if ( !Owner.IsValid() || !Beaming )
 		{
 			KillEffects();
 			return;
 		}
-
+		
 		if ( grabbed && !GrabbedObject.IsValid() )
 		{
 			DisableHighlights( lastGrabbedObject );
@@ -186,14 +232,13 @@ public partial class PhysGun
 		
 		var distance = startPos.Distance( endPos );
 		var targetMiddle = startPos + rotation.Forward * distance * 0.33f;
-		targetMiddle += Noise.FbmVector(2, Time.Now * 400f, Time.Now * 100f);
 		
 		if ( !justEnabled )
 		{
 			// If the beam halved or more in a single frame, snap the spring to the new position to avoid shakiness
 			if ( _prevBeamDistance > 1f && distance / _prevBeamDistance < 0.5f )
 			{
-				middleSpring = new Vector3.SpringDamped( targetMiddle, targetMiddle, 4, 0.2f );
+				middleSpring = new Vector3.SpringDamped( targetMiddle, targetMiddle, 12, 0.5f );
 			}
 
 			// Ensure the middle point is never behind the first one
@@ -201,7 +246,7 @@ public partial class PhysGun
 			if ( alongFwd < 0 )
 			{
 				var clamped = middleSpring.Current - rotation.Forward * alongFwd;
-				middleSpring = new Vector3.SpringDamped( clamped, targetMiddle, 4, 0.2f );
+				middleSpring = new Vector3.SpringDamped( clamped, targetMiddle, 12, 0.5f );
 			}
 		}
 
@@ -218,7 +263,7 @@ public partial class PhysGun
 			BeamRenderer.GameObject.Enabled = true;
 			_prevBeamDistance = distance;
 			BeamRenderer.VectorPoints[1] = targetMiddle;
-			middleSpring = new Vector3.SpringDamped( targetMiddle, targetMiddle, 4, 0.2f );
+			middleSpring = new Vector3.SpringDamped( targetMiddle, targetMiddle, 12, 0.5f );
 		}
 
 	}

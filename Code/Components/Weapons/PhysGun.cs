@@ -67,6 +67,7 @@ public partial class PhysGun : BaseWeapon, Component.INetworkListener
 		base.OnDisabled();
 		TryEndGrab();
 		StopBeamSound();
+		CleanupMaterials();
 	}
 
 	protected override void OnPreRender()

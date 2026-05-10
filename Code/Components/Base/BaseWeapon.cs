@@ -24,6 +24,7 @@ public partial class BaseWeapon : Component, SandboxPlus.PlayerController.IEvent
 	[Sync] public RealTimeSince TimeSinceSecondaryAttack { get; set; }
 
 	public ViewModel ViewModel => Scene?.Camera?.Components.GetInDescendantsOrSelf<ViewModel>( true );
+	public GameObject ViewModelObject = null;
 	public GameObject WorldModelObject = null;
 	public SkinnedModelRenderer WorldModel => WorldModelObject?.GetComponentInChildren<SkinnedModelRenderer>( true );
 	public SkinnedModelRenderer LocalWorldModel => !Owner.IsValid() || !Owner.Controller.IsValid() || Owner.Controller.ThirdPerson || IsProxy ? WorldModel : ViewModel?.Renderer;
@@ -80,6 +81,7 @@ public partial class BaseWeapon : Component, SandboxPlus.PlayerController.IEvent
 			vm.Flags |= GameObjectFlags.NotSaved | GameObjectFlags.NotNetworked;
 			vm.NetworkMode = NetworkMode.Never;
 			vm.Tags.Add( "firstperson", "viewmodel" );
+			ViewModelObject = vm;
 		}
 
 		var wm = WorldModelPrefab?.Clone(new CloneConfig()
