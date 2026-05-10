@@ -67,6 +67,7 @@ public partial class PhysGun : BaseWeapon, Component.INetworkListener
 		base.OnDisabled();
 		TryEndGrab();
 		StopBeamSound();
+		CleanupMaterials();
 	}
 
 	protected override void OnPreRender()
@@ -363,5 +364,7 @@ public partial class PhysGun : BaseWeapon, Component.INetworkListener
 		PhysicsBody body = GetBody( gameObject, bone );
 		if ( body.IsValid() )
 			body.BodyType = PhysicsBodyType.Dynamic;
+		
+		UnFreezeEffects();
 	}
 }
