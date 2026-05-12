@@ -21,9 +21,7 @@ public class Remover : BaseTool
 	{
 		if ( !go.IsValid() ) return;
 		UndoSystem.RemoveByGameObject(steamId, go);
+		UndoSystem.CreateUndoParticles(go);
 		go.Destroy();
-
-		// LegacyParticleSystem is fully broken now, todo replace
-		// Particles.MakeParticleSystem( "particles/physgun_freeze.vpcf", g.WorldTransform );
 	}
 }

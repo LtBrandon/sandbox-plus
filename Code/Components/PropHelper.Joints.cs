@@ -73,7 +73,7 @@ public partial class PropHelper
 		return ballJoint;
 	}
 
-	public Sandbox.SpringJoint Spring( GameObject to, Vector3 pos1, Vector3 pos2, bool noCollide = true, int fromBone = -1, int toBone = -1, float min = 0, float max = 0, float frequency = 5f, float damping = 0.7f, bool visualRope = true )
+	public Sandbox.SpringJoint Spring( GameObject to, Vector3 pos1, Vector3 pos2, SpringJoint.SpringForceMode forceMode, bool noCollide = true, int fromBone = -1, int toBone = -1, float min = 0, float max = 0, float frequency = 5f, float damping = 0.7f, bool visualRope = true )
 	{
 		var goJoint = new GameObject
 		{
@@ -101,6 +101,7 @@ public partial class PropHelper
 		springJoint.Frequency = frequency;
 		springJoint.Damping = damping;
 		springJoint.Body = toJoint;
+		springJoint.ForceMode = forceMode;
 		springJoint.Network.Refresh();
 
 		AddJointToList( springJoint );
@@ -108,7 +109,8 @@ public partial class PropHelper
 
 		if ( visualRope )
 		{
-			MakeVisualRope( goJoint, pos1, toJoint, pos2 );
+			float slack = float.Clamp(max - pos1.Distance( pos2 ), 0, max);
+			MakeVisualRope( goJoint, pos1, toJoint, pos2, min.AlmostEqual(max), slack, 1f );
 		}
 
 		var propHelper2 = to.GetComponent<PropHelper>();
@@ -125,12 +127,17 @@ public partial class PropHelper
 
 	public Sandbox.SpringJoint Rope( GameObject to, Vector3 pos1, Vector3 pos2, bool noCollide = true, int fromBone = -1, int toBone = -1, float min = 0, float max = 0, bool visualRope = true )
 	{
-		return Spring( to, pos1, pos2, noCollide, fromBone, toBone, min, max, frequency: 1001, damping: 0.7f, visualRope: visualRope );
+		return Spring( to, pos1, pos2, SpringJoint.SpringForceMode.Pull, noCollide, fromBone, toBone, min, max, frequency: 0, damping: 0, visualRope: visualRope );
 	}
-	public Sandbox.SpringJoint NoCollide( GameObject to, int fromBone = -1, int toBone = -1 )
+	public Sandbox.PhysicsFilter NoCollide( GameObject to, int fromBone = -1, int toBone = -1 )
 	{
-		// this is kinda weird for a nocollide, ideally we'd have a dedicated constraint or maybe a modified FixedJoint
-		return Spring( to, this.GameObject.WorldPosition, to.WorldPosition, true, fromBone, toBone, 0, 9999999, visualRope: false );
+		var go = new GameObject( GameObject, false, "no collide" );
+		var joint = go.AddComponent<PhysicsFilter>();
+		joint.Body = to;
+
+		go.NetworkSpawn();
+		
+		return joint;
 	}
 
 	public Sandbox.SliderJoint Slider( GameObject to, Vector3 pos1, Vector3 pos2, bool noCollide = true, int fromBone = -1, int toBone = -1, float min = 0, float max = 0, float friction = 0, bool visualRope = true )
@@ -189,30 +196,36 @@ public partial class PropHelper
 		return sliderJoint;
 	}
 
-	[Rpc.Broadcast]
-	private static void MakeVisualRope( GameObject go1, Vector3 position1, GameObject go2, Vector3 position2 )
+	private static void MakeVisualRope( GameObject go1, Vector3 position1, GameObject go2, Vector3 position2, bool rigid = true, float slack = 0f, float radius = 1f )
 	{
-		return; // LegacyParticleSystem is fully broken now, todo replace
-		var rope = Particles.MakeParticleSystem( "particles/entity/rope.vpcf", go1.WorldTransform, 0, go1 );
-		rope.GameObject.SetParent( go1 );
-		var RopePoints = new List<ParticleControlPoint>();
-		if ( go1.IsWorld() )
+		VerletRope vertletRope = null;
+		var splineInterpolation = 0;
+		if ( !rigid )
 		{
-			RopePoints.Add( new() { StringCP = "0", Value = ParticleControlPoint.ControlPointValueInput.Vector3, VectorValue = position1 } );
+			vertletRope = go1.AddComponent<VerletRope>();
+			vertletRope.Attachment = go2;
+
+			const int maxSegmentCount = 48;
+			// Maximum segment count, so long ropes don't exceed computation limits
+			float length = position1.Distance( position2 ) + slack;
+			int segmentCount = Math.Min( maxSegmentCount, MathX.CeilToInt( length / 16f ) );
+
+			vertletRope.SegmentCount = segmentCount;
+			vertletRope.Radius = radius;
+			vertletRope.Slack = slack;
+			splineInterpolation = 4;
 		}
-		else
-		{
-			RopePoints.Add( new() { StringCP = "0", Value = ParticleControlPoint.ControlPointValueInput.GameObject, GameObjectValue = go1 } );
-		}
-		if ( go2.IsWorld() )
-		{
-			RopePoints.Add( new() { StringCP = "1", Value = ParticleControlPoint.ControlPointValueInput.Vector3, VectorValue = position2 } );
-		}
-		else
-		{
-			RopePoints.Add( new() { StringCP = "1", Value = ParticleControlPoint.ControlPointValueInput.GameObject, GameObjectValue = go2 } );
-		}
-		rope.ControlPoints = RopePoints;
+
+		var lineRenderer = go1.AddComponent<LineRenderer>();
+		lineRenderer.Points = [go1, go2];
+		lineRenderer.Width = radius;
+		lineRenderer.Color = Color.White;
+		lineRenderer.Lighting = true;
+		lineRenderer.CastShadows = true;
+		lineRenderer.SplineInterpolation = splineInterpolation;
+		lineRenderer.Texturing = lineRenderer.Texturing with { Material = Material.Load( "materials/default/rope01.vmat" ), WorldSpace = true, UnitsPerTexture = 32 };
+		lineRenderer.Face = SceneLineObject.FaceMode.Cylinder;
+		vertletRope?.LinkedRenderer = lineRenderer;
 	}
 
 	private static GameObject GetJointGameObject( GameObject go, int bone = -1 )

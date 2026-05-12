@@ -9,7 +9,7 @@ public partial class ThrusterComponent : BaseWireInputComponent, Component.IPres
 	// can't sync a rigidbody, so sync its GameObject instead
 	[Property, Sync] public GameObject TargetObject { get; set; }
 	[Property] public Rigidbody TargetBody { get; set; }
-	private LegacyParticleSystem effects;
+	[Property] public GameObject OnEffect { get; set; }
 
 	protected bool On
 	{
@@ -31,21 +31,24 @@ public partial class ThrusterComponent : BaseWireInputComponent, Component.IPres
 		}
 	}
 
+	protected override void OnEnabled()
+	{
+		base.OnEnabled();
+
+		OnEffect ??= GameObject.Clone("entities/thruster/fx_thruster.prefab", new CloneConfig { Parent = GameObject, StartEnabled = false });
+		OnEffect?.Enabled = false;
+	}
+
 	protected void OnThrusterEnabled()
 	{
 		// Turn emitter on
-		if ( effects != null )
-			return;
-
-		// LegacyParticleSystem is fully broken now, todo replace
-		// effects = Particles.MakeParticleSystem( "particles/physgun_end_nohit.vpcf", Transform.World, 0, GameObject );
+		OnEffect?.Enabled = true;
 	}
 
 	protected void OnThrusterDisabled()
 	{
 		// Turn emitter off
-		effects?.Destroy();
-		effects = null;
+		OnEffect?.Enabled = false;
 	}
 
 	bool IPressable.CanPress( IPressable.Event e )
@@ -107,10 +110,10 @@ public partial class ThrusterComponent : BaseWireInputComponent, Component.IPres
 						Force * ForceMultiplier * (IsForward ? 1 : -1)
 				)
 			);
-			if ( effects.IsValid() )
+			if ( OnEffect.IsValid() )
 			{
 				var bounds = GetComponent<Prop>().Model.Bounds;
-				effects.WorldPosition = Transform.World.PointToWorld( bounds.Center + new Vector3( 0, 0, bounds.Extents.z ) );
+				OnEffect.WorldPosition = Transform.World.PointToWorld( bounds.Center + new Vector3( 0, 0, bounds.Extents.z ) );
 			}
 		}
 	}
