@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Text.Json;
+using SpringJoint = Sandbox.SpringJoint;
 
 namespace SandboxPlus
 {
@@ -650,11 +651,11 @@ namespace SandboxPlus
 				}
 				else if ( type == ConstraintType.Nocollide )
 				{
-					joint = propHelper1.NoCollide( ent2, bone1, bone2 );
+					propHelper1.NoCollide( ent2, bone1, bone2 );
 				}
 				else if ( type == ConstraintType.Spring )
 				{
-					joint = propHelper1.Spring( ent2, anchor1World.Position, anchor2World.Position, !collisions, bone1, bone2, minLength, maxLength, springLinear.Frequency, springLinear.Damping );
+					joint = propHelper1.Spring( ent2, anchor1World.Position, anchor2World.Position, SpringJoint.SpringForceMode.Both, !collisions, bone1, bone2, minLength, maxLength, springLinear.Frequency, springLinear.Damping );
 				}
 				else if ( type == ConstraintType.Rope )
 				{

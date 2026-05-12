@@ -324,15 +324,16 @@
 		protected void ApplyNocollide()
 		{
 			var joint = trace1.GameObject.GetComponent<PropHelper>().NoCollide( trace2.GameObject, trace1.Bone, trace2.Bone );
-			FinishConstraintCreation( joint, () =>
+			RegisterUndo( () =>
 			{
 				if ( joint.IsValid() )
 				{
-					joint.Remove();
+					joint.Destroy();
 					return $"Removed {Type} constraint";
 				}
 				return "";
 			} );
+			ResetTool();
 		}
 
 		protected void ApplySpring()
@@ -345,6 +346,7 @@
 				trace2.GameObject,
 				position1,
 				trace2.EndPosition,
+				SpringJoint.SpringForceMode.Both,
 				noCollide,
 				trace1.Bone,
 				trace2.Bone,
@@ -609,14 +611,18 @@
 			return desc;
 		}
 
+		private void RegisterUndo(Func<string> undo)
+		{
+			UndoSystem.Add( Owner, undo );
+			Analytics.Increment( "constraint.created" );
+		}
+
 		private void FinishConstraintCreation( Sandbox.Joint joint, Func<string> undo )
 		{
 			joint.OnBreak += () => { undo(); };
 
 			// Event.Run( "joint.spawned", joint, Owner );
-			UndoSystem.Add( Owner, undo );
-			Analytics.Increment( "constraint.created" );
-
+			RegisterUndo(undo);
 			if ( WireboxSupport && Input.Down( "walk" ) )
 			{
 				createdJoint = joint;

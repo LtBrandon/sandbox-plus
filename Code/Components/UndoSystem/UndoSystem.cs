@@ -65,7 +65,7 @@ public sealed class UndoSystem : GameObjectSystem<UndoSystem>
 				{
 					HintFeed.AddHint( "", undoMessage );
 
-					if ( undo.Prop != null) CreateUndoParticles( undo.Prop.WorldPosition );
+					if ( undo.Prop != null) CreateUndoParticles( undo.Prop );
 					// Nostalgia
 					Sound.Play( "drop_001", player.WorldPosition );
 				}
@@ -83,12 +83,15 @@ public sealed class UndoSystem : GameObjectSystem<UndoSystem>
 	}
 
 	[Rpc.Broadcast]
-	public static void CreateUndoParticles( Vector3 pos )
+	public static void CreateUndoParticles( GameObject go )
 	{
-		if ( pos != Vector3.Zero )
-		{
-			// LegacyParticleSystem is fully broken now, todo replace
-			// Particles.MakeParticleSystem( "particles/physgun_freeze.vpcf", new Transform( pos ), 4 );
-		}
+		if ( go == null ) return;
+		var effect = Sandbox.GameObject.Clone( "prefabs/effects/remove.prefab", new CloneConfig { StartEnabled = false } );
+		effect?.WorldTransform = go.WorldTransform;
+		var emitter = effect?.GetComponentInChildren<ParticleBoxEmitter>(true);
+		var size = go.GetLocalBounds().Size;
+		emitter?.Size = size;
+		emitter?.Burst = float.Clamp(50 * (size.Length / 50f), 25, 1500);
+		effect?.Enabled = true;
 	}
 }

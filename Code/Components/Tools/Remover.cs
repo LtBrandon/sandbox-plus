@@ -17,12 +17,10 @@ public class Remover : BaseTool
 	}
 
 	[Rpc.Broadcast]
-	static void Remove( GameObject g )
+	static void Remove( GameObject go )
 	{
-		if ( !g.IsValid() ) return;
-		g.Destroy();
-
-		// LegacyParticleSystem is fully broken now, todo replace
-		// Particles.MakeParticleSystem( "particles/physgun_freeze.vpcf", g.WorldTransform );
+		if ( !go.IsValid() ) return;
+		UndoSystem.CreateUndoParticles(go);
+		go.Destroy();
 	}
 }
