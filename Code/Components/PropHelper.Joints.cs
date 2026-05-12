@@ -127,7 +127,7 @@ public partial class PropHelper
 
 	public Sandbox.SpringJoint Rope( GameObject to, Vector3 pos1, Vector3 pos2, bool noCollide = true, int fromBone = -1, int toBone = -1, float min = 0, float max = 0, bool visualRope = true )
 	{
-		return Spring( to, pos1, pos2, SpringJoint.SpringForceMode.Pull, noCollide, fromBone, toBone, min, max, frequency: 1001, damping: 0.7f, visualRope: visualRope );
+		return Spring( to, pos1, pos2, SpringJoint.SpringForceMode.Pull, noCollide, fromBone, toBone, min, max, frequency: 0, damping: 0, visualRope: visualRope );
 	}
 	public Sandbox.PhysicsFilter NoCollide( GameObject to, int fromBone = -1, int toBone = -1 )
 	{
@@ -212,6 +212,7 @@ public partial class PropHelper
 
 			vertletRope.SegmentCount = segmentCount;
 			vertletRope.Radius = radius;
+			vertletRope.Slack = slack;
 			splineInterpolation = 4;
 		}
 
